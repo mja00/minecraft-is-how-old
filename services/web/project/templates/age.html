@@ -26,6 +26,12 @@
                 color: white;
             }
         }
+        #Footer {
+            position:sticky;
+            bottom:0;
+            width:100%;
+            padding-top: 25%;
+        }
     </style>
     <meta property="og:title" content="Minecraft {{ version }} is how old?!?">
     <meta property="og:url" content="https://paper.theairplan.com/age/{{ version }}">
@@ -89,6 +95,7 @@
     {% if birthday %}
     <h2 id="bday">Today is the version's birthday! 🥳</h2>
     {% endif %}
+    <footer id="Footer"><a href="https://www.youtube.com/watch?v=-5wpm-gesOY">Why does the date change after loading?</a></footer>
 </div>
 </body>
 </html>
