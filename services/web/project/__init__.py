@@ -86,11 +86,8 @@ def humanize_timedelta(now, release_date):
     if seconds > 0:
         unit_array.append(f"{seconds} {second_unit}")
 
-    # Pop the last out of the array and store it, we'll be appending it with an and
-    last = unit_array.pop()
-
     # Build our string
-    return f"{', '.join(unit_array)} and {last}"
+    return unit_array
 
 
 @app.route("/")
@@ -112,16 +109,18 @@ def age(version):
         # We've got the date, now we just need to get a human readable string
         # Get the current time
         now = dt.now(timezone.utc)
-        print(f"Current time: {now} and release date: {release_date}")
-        # Get the difference between the two
-        diff = now - release_date
         # Precise delta
-        delta = humanize_timedelta(now, release_date)
+        humanized = humanize_timedelta(now, release_date)
+        last = humanized.pop()
+        delta = ', '.join(humanized) + " and " + last
+        # Get the first
+        first = humanized[0]
+        # We'll use this for the meta tag
 
         # Check if it's the release's birthday
         if release_date.day == now.day and release_date.month == now.month:
             birthday = True
-        return render_template("age.html", version=version, age=delta, birthday=birthday, raw_seconds=diff.total_seconds(), release=release_date.isoformat())
+        return render_template("age.html", version=version, age=delta, birthday=birthday, release=release_date.isoformat(), first=first)
     except KeyError:
         # Return just a 404 if we don't have the version
         return "Unknown version", 404

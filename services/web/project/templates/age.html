@@ -35,7 +35,7 @@
     </style>
     <meta property="og:title" content="Minecraft {{ version }} is how old?!?">
     <meta property="og:url" content="https://minecraftishowold.today/{{ version }}">
-    <meta property="og:description" content="Minecraft {{ version }} released {{ age }} ago! {% if birthday %}Happy Birthday! 🥳{% endif %}">
+    <meta property="og:description" content="Minecraft {{ version }} released about {{ first }} ago! {% if birthday %}Happy Birthday! 🥳{% endif %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
@@ -48,10 +48,11 @@
         const theAge = document.getElementById("theage");
         const unitArray = [];
 
-        // This is ISO 8601 format
+        // The format is 2023-03-14T12:56:18+00:00
         const momentParsed = moment(date, "YYYY-MM-DDTHH:mm:ssZ").utc();
         const momentNow = moment().utc();
         const diff = momentNow.diff(momentParsed, "milliseconds");
+        console.log(diff/1000);
         const duration = moment.duration(diff);
 
         const years = duration.years();
@@ -80,10 +81,13 @@
         const last = unitArray.pop();
         // Build our string
         theAge.innerText = "Minecraft " + version + " released " + unitArray.join(", ") + " and " + last + " ago!";
+        // Update our meta tag as well
+        document.querySelector("meta[property='og:description']").setAttribute("content", "Minecraft " + version + " released " + unitArray.join(", ") + " and " + last + " ago! {% if birthday %}Happy Birthday! 🥳{% endif %}");
     }
 
     // Once the page loads we want to run the parsing function every second
     window.onload = function() {
+        parseAge(release_date, version);
         // Increment the age every second
         setInterval(function() {
             parseAge(release_date, version);
@@ -91,7 +95,7 @@
     }
 </script>
 <div id="thecontent">
-    <h1 id="theage">Minecraft {{ version }} released {{ age }} ago!</h1>
+    <h1 id="theage"></h1>
     {% if birthday %}
     <h2 id="bday">Today is the version's birthday! 🥳</h2>
     {% endif %}
