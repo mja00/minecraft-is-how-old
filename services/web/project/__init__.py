@@ -93,7 +93,6 @@ def humanize_timedelta(now, release_date):
     return f"{', '.join(unit_array)} and {last}"
 
 
-
 @app.route("/")
 def index():
     latest_release = get_latest_release()
