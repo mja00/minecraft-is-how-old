@@ -1,9 +1,9 @@
 import os
 import requests
 import json
-import humanize
 from flask import Flask, render_template, redirect, url_for
 from datetime import datetime as dt, timezone
+from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 
@@ -54,6 +54,46 @@ def get_latest_release():
             return version["id"]
 
 
+def humanize_timedelta(now, release_date):
+    unit_array = []
+    duration = relativedelta(now, release_date)
+
+    years = duration.years
+    months = duration.months
+    days = duration.days
+    hours = duration.hours
+    minutes = duration.minutes
+    seconds = duration.seconds
+
+    year_unit = years == 1 and "year" or "years"
+    month_unit = months == 1 and "month" or "months"
+    day_unit = days == 1 and "day" or "days"
+    hour_unit = hours == 1 and "hour" or "hours"
+    minute_unit = minutes == 1 and "minute" or "minutes"
+    second_unit = seconds == 1 and "second" or "seconds"
+
+    # Push all the units to an array
+    if years > 0:
+        unit_array.append(f"{years} {year_unit}")
+    if months > 0:
+        unit_array.append(f"{months} {month_unit}")
+    if days > 0:
+        unit_array.append(f"{days} {day_unit}")
+    if hours > 0:
+        unit_array.append(f"{hours} {hour_unit}")
+    if minutes > 0:
+        unit_array.append(f"{minutes} {minute_unit}")
+    if seconds > 0:
+        unit_array.append(f"{seconds} {second_unit}")
+
+    # Pop the last out of the array and store it, we'll be appending it with an and
+    last = unit_array.pop()
+
+    # Build our string
+    return f"{', '.join(unit_array)} and {last}"
+
+
+
 @app.route("/")
 def index():
     latest_release = get_latest_release()
@@ -73,10 +113,12 @@ def age(version):
         # We've got the date, now we just need to get a human readable string
         # Get the current time
         now = dt.now(timezone.utc)
+        print(f"Current time: {now} and release date: {release_date}")
         # Get the difference between the two
         diff = now - release_date
         # Precise delta
-        delta = humanize.precisedelta(diff, minimum_unit="seconds", format="%0.0f")
+        delta = humanize_timedelta(now, release_date)
+
         # Check if it's the release's birthday
         if release_date.day == now.day and release_date.month == now.month:
             birthday = True
