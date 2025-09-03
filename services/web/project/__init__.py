@@ -15,6 +15,9 @@ headers = {
     "Content-Type": "application/json",
 }
 
+# Ensure our project/static folder exists
+os.makedirs("project/static", exist_ok=True)
+
 
 def parse_manifest_for_dates(manifest):
     global MANIFEST_INFO
