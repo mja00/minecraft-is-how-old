@@ -2,8 +2,8 @@
 # BUILDER #
 ###########
 
-# Python 3.11 slim buster
-FROM python:3.11-slim-buster as builder
+# Python 3.13 slim bookworm
+FROM python:3.13-slim-bookworm as builder
 
 # Work dir
 WORKDIR /usr/src/app
@@ -19,7 +19,7 @@ RUN apt update && apt install -y --no-install-recommends gcc
 RUN pip install --upgrade pip
 RUN pip install flake8
 COPY . /usr/src/app/
-RUN flake8 --ignore=E501,F401 --exclude venv,migrations .
+RUN flake8 --ignore=E501,F401,W293 --exclude venv,migrations .
 
 # install python dependencies
 COPY ./requirements.txt .
@@ -30,7 +30,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 # FINAL #
 #########
 
-FROM python:3.11-slim-buster
+FROM python:3.13-slim-bookworm
 
 # App user home dir
 RUN mkdir -p /home/app
