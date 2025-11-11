@@ -116,8 +116,8 @@ def age(version):
         humanized = humanize_timedelta(now, release_date)
         last = humanized.pop()
         delta = ', '.join(humanized) + " and " + last
-        # Get the first
-        first = humanized[0]
+        # We'll show the first two units of time (if there are two left, otherwise just the first) in the embed
+        first = humanized[0] if len(humanized) == 1 else humanized[0] + " and " + humanized[1]
         # We'll use this for the meta tag
 
         # Check if it's the release's birthday
